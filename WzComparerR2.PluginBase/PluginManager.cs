@@ -56,6 +56,46 @@ namespace WzComparerR2.PluginBase
         {
             return FindWz(fullPath, null);
         }
+        public static Wz_Node FindNodeByGearID(Wz_Node characWz, int id)
+        {
+            string imgName = id.ToString("D8") + ".img";
+            Wz_Node imgNode = null;
+
+            foreach (var node1 in characWz.Nodes)
+            {
+                if (node1.Text == imgName)
+                {
+                    imgNode = node1;
+                    break;
+                }
+                else if (node1.Nodes.Count > 0)
+                {
+                    foreach (var node2 in node1.Nodes)
+                    {
+                        if (node2.Text == imgName)
+                        {
+                            imgNode = node2;
+                            break;
+                        }
+                    }
+                    if (imgNode != null)
+                    {
+                        break;
+                    }
+                }
+            }
+
+            if (imgNode != null)
+            {
+                Wz_Image img = imgNode.GetValue<Wz_Image>();
+                if (img != null && img.TryExtract())
+                {
+                    return img.Node;
+                }
+            }
+
+            return null;
+        }
 
         public static Wz_Node FindWz(string fullPath, Wz_File sourceWzFile)
         {

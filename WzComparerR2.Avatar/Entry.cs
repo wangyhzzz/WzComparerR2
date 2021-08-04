@@ -59,26 +59,43 @@ namespace WzComparerR2.Avatar
             }*/
 
             canvas.ActionName = "stand1";
-            canvas.EmotionName = "shine";
+            canvas.EmotionName = "default";
             canvas.TamingActionName = "stand1";
-            AddPart(canvas, "Character\\00002000.img");
-            AddPart(canvas, "Character\\00012000.img");
-            AddPart(canvas, "Character\\Face\\00020000.img");
-            AddPart(canvas, "Character\\Hair\\00030000.img");
-            AddPart(canvas, "Character\\Coat\\01040036.img");
-            AddPart(canvas, "Character\\Pants\\01060026.img");
+            canvas.EarType = 3;
+            
+            // AddPart(canvas, "Character\\00002000.img");
+            // AddPart(canvas, "Character\\00012000.img");
+            // AddPart(canvas, "Character\\Face\\00020000.img");
+            // AddPart(canvas, "Character\\Hair\\00030000.img");
+            // AddPart(canvas, "Character\\Coat\\01040036.img");
+            // AddPart(canvas, "Character\\Pants\\01060026.img");
+            var list = new List<int> {2018, 12018, 47097, 26854, 1702911, 1071012, 1005228, 1053194, 1032222};
+
+            var characWz = PluginManager.FindWz(Wz_Type.Character);
+            foreach (var array in list)
+            {
+                Wz_Node imgNode = PluginManager.FindNodeByGearID(characWz, array);
+                if (imgNode != null)
+                {
+                    canvas.AddPart(imgNode);
+                }
+            }
             //AddPart(canvas, "Character\\Weapon\\01442000.img");
             //AddPart(canvas, "Character\\Weapon\\01382007.img");
             //AddPart(canvas, "Character\\Weapon\\01332000.img");
             //AddPart(canvas, "Character\\Weapon\\01342000.img");
 
+            var type = canvas.GetCashWeaponTypes();
+            if (type.Count > 0)
+                canvas.WeaponType = type[0];
             var faceFrames = canvas.GetFaceFrames(canvas.EmotionName);
 
             //foreach (var action in canvas.Actions)
-            foreach (var action in new[] { "walk1", "jump", "stand1"})
+            foreach (var action in new[] {"walk1", "jump", "stand1", "walk2", "swingO2","dance_starP5","cafeMiniGame"})
             {
                 Gif gif = new Gif();
                 var actionFrames = canvas.GetActionFrames(action);
+                if (actionFrames.Length < 1) continue;
                 foreach (var frame in actionFrames)
                 {
                     if (frame.Delay != 0)
@@ -110,7 +127,7 @@ namespace WzComparerR2.Avatar
                 gifFile.Dispose();
             }
             
-            if (true)
+            if (!true)
             {
 
                 Gif gif = CreateChair(canvas);
