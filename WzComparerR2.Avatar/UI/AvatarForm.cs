@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -28,6 +29,19 @@ namespace WzComparerR2.Avatar.UI
 #if !DEBUG
             buttonItem1.Visible = false;
 #endif
+        }
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            switch (keyData)
+            {
+                case Keys.A:
+                    break;
+                default:
+                    return base.ProcessCmdKey(ref msg, keyData);
+            }
+
+            return true;
         }
 
         public SuperTabControlPanel GetTabPanel()
@@ -58,7 +72,7 @@ namespace WzComparerR2.Avatar.UI
         public void OnSelectedNode1Changed(object sender, WzNodeEventArgs e)
         {
             if (PluginEntry.Context.SelectedTab != PluginEntry.Tab || e.Node == null
-                || this.btnLock.Checked)
+                                                                   || this.btnLock.Checked)
             {
                 return;
             }
@@ -79,6 +93,7 @@ namespace WzComparerR2.Avatar.UI
                         LoadPart(wzImg.Node);
                         this.ResumeUpdateDisplay();
                     }
+
                     break;
             }
         }
@@ -92,7 +107,7 @@ namespace WzComparerR2.Avatar.UI
                 if (part != null)
                 {
                     var wzFile = part.Node.GetNodeWzFile();
-                    if (wzFile != null && e.WzStructure.wz_files.Contains(wzFile))//将要关闭文件 移除
+                    if (wzFile != null && e.WzStructure.wz_files.Contains(wzFile)) //将要关闭文件 移除
                     {
                         avatar.Parts[i] = null;
                         hasChanged = true;
@@ -113,14 +128,15 @@ namespace WzComparerR2.Avatar.UI
         private bool AvatarInit()
         {
             this.inited = this.avatar.LoadZ()
-                && this.avatar.LoadActions()
-                && this.avatar.LoadEmotions();
+                          && this.avatar.LoadActions()
+                          && this.avatar.LoadEmotions();
 
             if (this.inited)
             {
                 this.FillBodyAction();
                 this.FillEmotion();
             }
+
             return this.inited;
         }
 
@@ -321,6 +337,7 @@ namespace WzComparerR2.Avatar.UI
                     partsID[i] = part.ID.ToString();
                 }
             }
+
             return string.Join(",", partsID);
         }
 
@@ -372,6 +389,7 @@ namespace WzComparerR2.Avatar.UI
         }
 
         #region 同步界面
+
         private void FillBodyAction()
         {
             var oldSelection = cmbActionBody.SelectedItem as ComboItem;
@@ -392,6 +410,7 @@ namespace WzComparerR2.Avatar.UI
                         cmbItem.ForeColor = Color.Indigo;
                         break;
                 }
+
                 cmbItem.Tag = action;
                 cmbActionBody.Items.Add(cmbItem);
 
@@ -442,6 +461,7 @@ namespace WzComparerR2.Avatar.UI
                     actionName = "sit";
                     break;
             }
+
             SelectBodyAction(actionName);
         }
 
@@ -449,16 +469,18 @@ namespace WzComparerR2.Avatar.UI
         {
             if (this.avatar.Taming != null)
             {
-                var tamingAction =  (this.cmbActionTaming.SelectedItem as ComboItem)?.Text;
+                var tamingAction = (this.cmbActionTaming.SelectedItem as ComboItem)?.Text;
                 if (tamingAction != null)
                 {
-                    string forceAction = this.avatar.Taming.Node.FindNodeByPath($@"characterAction\{tamingAction}").GetValueEx<string>(null);
+                    string forceAction = this.avatar.Taming.Node.FindNodeByPath($@"characterAction\{tamingAction}")
+                        .GetValueEx<string>(null);
                     if (forceAction != null)
                     {
                         this.SelectBodyAction(forceAction);
                     }
 
-                    string forceEmotion = this.avatar.Taming.Node.FindNodeByPath($@"characterEmotion\{tamingAction}").GetValueEx<string>(null);
+                    string forceEmotion = this.avatar.Taming.Node.FindNodeByPath($@"characterEmotion\{tamingAction}")
+                        .GetValueEx<string>(null);
                     if (forceEmotion != null)
                     {
                         this.SelectEmotion(forceEmotion);
@@ -490,6 +512,7 @@ namespace WzComparerR2.Avatar.UI
                     {
                         text = string.Format("{0}\r\n{1}", "(null)", part.ID == null ? "-" : part.ID.ToString());
                     }
+
                     btn.Text = text;
                     btn.SetIcon(part.Icon.Bitmap);
                     btn.Tag = part;
@@ -500,6 +523,7 @@ namespace WzComparerR2.Avatar.UI
                     itemPanel1.Items.Add(btn);
                 }
             }
+
             itemPanel1.EndUpdate();
         }
 
@@ -606,6 +630,7 @@ namespace WzComparerR2.Avatar.UI
                 item.Text = (start + i).ToString();
                 items.Add(item);
             }
+
             FillComboItems(comboBox, items);
         }
 
@@ -618,6 +643,7 @@ namespace WzComparerR2.Avatar.UI
                 item.Text = itemText;
                 _items.Add(item);
             }
+
             FillComboItems(comboBox, _items);
         }
 
@@ -632,6 +658,7 @@ namespace WzComparerR2.Avatar.UI
                 item.Tag = Math.Abs(f.Delay);
                 items.Add(item);
             }
+
             FillComboItems(comboBox, items);
         }
 
@@ -664,6 +691,7 @@ namespace WzComparerR2.Avatar.UI
 
             comboBox.EndUpdate();
         }
+
         #endregion
 
         private void cmbActionBody_SelectedIndexChanged(object sender, EventArgs e)
@@ -753,6 +781,7 @@ namespace WzComparerR2.Avatar.UI
                 {
                     AnimateStart();
                 }
+
                 var item = cmbEmotionFrame.SelectedItem as ComboItem;
                 int? delay;
                 if (item != null && ((delay = item.Tag as int?) != null) && delay.Value >= 0)
@@ -775,6 +804,7 @@ namespace WzComparerR2.Avatar.UI
                 {
                     AnimateStart();
                 }
+
                 var item = cmbTamingFrame.SelectedItem as ComboItem;
                 int? delay;
                 if (item != null && ((delay = item.Tag as int?) != null) && delay.Value >= 0)
@@ -823,17 +853,17 @@ namespace WzComparerR2.Avatar.UI
 
             if (this.animator.BodyDelay == 0 && FindNextFrame(cmbBodyFrame))
             {
-                this.animator.BodyDelay = (int)(cmbBodyFrame.SelectedItem as ComboItem).Tag;
+                this.animator.BodyDelay = (int) (cmbBodyFrame.SelectedItem as ComboItem).Tag;
             }
 
             if (this.animator.EmotionDelay == 0 && FindNextFrame(cmbEmotionFrame))
             {
-                this.animator.EmotionDelay = (int)(cmbEmotionFrame.SelectedItem as ComboItem).Tag;
+                this.animator.EmotionDelay = (int) (cmbEmotionFrame.SelectedItem as ComboItem).Tag;
             }
 
             if (this.animator.TamingDelay == 0 && FindNextFrame(cmbTamingFrame))
             {
-                this.animator.TamingDelay = (int)(cmbTamingFrame.SelectedItem as ComboItem).Tag;
+                this.animator.TamingDelay = (int) (cmbTamingFrame.SelectedItem as ComboItem).Tag;
             }
 
             this.ResumeUpdateDisplay();
@@ -896,15 +926,14 @@ namespace WzComparerR2.Avatar.UI
                 item = cmbFrames.Items[i] as ComboItem;
                 if (item != null && item.Tag is int)
                 {
-                    int delay = (int)item.Tag;
+                    int delay = (int) item.Tag;
                     if (delay > 0)
                     {
                         cmbFrames.SelectedIndex = i;
                         return true;
                     }
                 }
-            }
-            while (i != selectedIndex);
+            } while (i != selectedIndex);
 
             return false;
         }
@@ -941,7 +970,8 @@ namespace WzComparerR2.Avatar.UI
 
         private void btnReset_Click(object sender, EventArgs e)
         {
-            this.avatarContainer1.Origin = new Point(this.avatarContainer1.Width / 2, this.avatarContainer1.Height / 2 + 40);
+            this.avatarContainer1.Origin =
+                new Point(this.avatarContainer1.Width / 2, this.avatarContainer1.Height / 2 + 40);
             this.avatarContainer1.Invalidate();
         }
 
@@ -1008,9 +1038,9 @@ namespace WzComparerR2.Avatar.UI
                 {
                     sb.Append("  ").AppendLine(gearID.ToString("D8"));
                 }
+
                 MessageBoxEx.Show(sb.ToString(), "嗯..");
             }
-
         }
 
         private Wz_Node FindNodeByGearID(Wz_Node characWz, int id)
@@ -1035,6 +1065,7 @@ namespace WzComparerR2.Avatar.UI
                             break;
                         }
                     }
+
                     if (imgNode != null)
                     {
                         break;
@@ -1058,7 +1089,7 @@ namespace WzComparerR2.Avatar.UI
         {
             public Animator()
             {
-                this.delays = new int[3] { -1, -1, -1 };
+                this.delays = new int[3] {-1, -1, -1};
             }
 
             private int[] delays;
@@ -1116,6 +1147,7 @@ namespace WzComparerR2.Avatar.UI
                         nextFrame = nextFrame <= 0 ? delay : Math.Min(nextFrame, delay);
                     }
                 }
+
                 this.NextFrameDelay = nextFrame;
             }
         }

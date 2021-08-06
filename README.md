@@ -26,7 +26,6 @@ links: [\[更新日志\]](https://github.com/Kagamia/WzComparerR2/tree/master/Up
 
 # Compile
 - vs2017 or higher
-- put [CharaSimResource](https://github.com/Kagamia/CharaSimResource) together
 
 # Credits and Acknowledgement
 - **Fiel** ([Southperry](http://www.southperry.net))  wz文件读取代码改造自WzExtract 以及WzPatcher
