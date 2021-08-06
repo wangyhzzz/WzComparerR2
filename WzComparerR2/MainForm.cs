@@ -43,6 +43,7 @@ namespace WzComparerR2
             RegisterPluginEvents();
             createStyleItems();
             initFields();
+            openWz(@"E:\Program Files (x86)\上海数龙科技有限公司\冒险岛online\Base.wz");
         }
 
         List<Wz_Structure> openedWz;

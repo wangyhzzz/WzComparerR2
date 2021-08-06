@@ -29,20 +29,36 @@ namespace WzComparerR2.Avatar.UI
 #if !DEBUG
             buttonItem1.Visible = false;
 #endif
+            this.KeyPreview = true;
         }
 
-        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        protected override void OnKeyDown(KeyEventArgs e)
         {
+            handKey(true, e.KeyData);
+        }
+
+        protected override void OnKeyUp(KeyEventArgs e)
+        {
+            handKey(false, e.KeyData);
+        }
+
+        void handKey(bool press, Keys keyData)
+        {
+            if (!press)
+                cmbActionBody.SelectedIndex = 2;
             switch (keyData)
             {
                 case Keys.A:
+                    cmbActionBody.SelectedIndex = 0;
+                    break;
+                case Keys.D:
+                    cmbActionBody.SelectedIndex = 0;
                     break;
                 default:
-                    return base.ProcessCmdKey(ref msg, keyData);
+                    return;
             }
-
-            return true;
         }
+
 
         public SuperTabControlPanel GetTabPanel()
         {
@@ -393,6 +409,9 @@ namespace WzComparerR2.Avatar.UI
         private void FillBodyAction()
         {
             var oldSelection = cmbActionBody.SelectedItem as ComboItem;
+            //初始化动作为站立
+            if (oldSelection == null)
+                oldSelection = new ComboItem("stand1");
             int? newSelection = null;
             cmbActionBody.BeginUpdate();
             cmbActionBody.Items.Clear();
@@ -954,7 +973,7 @@ namespace WzComparerR2.Avatar.UI
 
         private void btnMale_Click(object sender, EventArgs e)
         {
-            if (MessageBoxEx.Show("初始化为男性角色？", "提示") == DialogResult.OK)
+            // if (MessageBoxEx.Show("初始化为男性角色？", "提示") == DialogResult.OK)
             {
                 LoadCode("2000,12000,20000,30000,1040036,1060026", 0);
             }
@@ -962,7 +981,7 @@ namespace WzComparerR2.Avatar.UI
 
         private void btnFemale_Click(object sender, EventArgs e)
         {
-            if (MessageBoxEx.Show("初始化为女性角色？", "提示") == DialogResult.OK)
+            // if (MessageBoxEx.Show("初始化为女性角色？", "提示") == DialogResult.OK)
             {
                 LoadCode("2000,12000,21000,31000,1041046,1061039", 0);
             }
@@ -1046,6 +1065,8 @@ namespace WzComparerR2.Avatar.UI
 
                 MessageBoxEx.Show(sb.ToString(), "嗯..");
             }
+
+            chkBodyPlay.Checked = true;
         }
 
         private Wz_Node FindNodeByGearID(Wz_Node characWz, int id)
