@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.Drawing;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -48,6 +46,9 @@ namespace WzComparerR2.Avatar.UI
         }
 
         static private int status = 0;
+        private const int walk = 0;
+        private const int stand = 2;
+        private const int attack = 5;
         void handKey(bool press, Keys keyData)
         {
             int _press = press ? 1 : 0;
@@ -55,33 +56,46 @@ namespace WzComparerR2.Avatar.UI
             switch (keyData)
             {
                 case Keys.A:
-                    if ((status ^ _press << 0) == 0)
-                        return;
-                    status ^=  1 << 0;
+                    if (_press == (1 & status>>0)) return;
+                    status ^= 1 << 0;
                     if (press)
-                    {
-                        cmbActionBody.SelectedIndex = 0;
-                        return;
-                    }
+                        flip = false;
                     break;
                 case Keys.D:
-                    if ((status ^ _press << 1) == 0) return;
-                    status ^=  1 << 1;
+                    if (_press == (1 & status >> 1)) return;
+                    status ^= 1 << 1;
+                    if (press)
+                        flip = true;
+                    break;
+                case Keys.J:
+                    if (_press == (1 & status >> 2)) return;
+                    status ^= 1 << 2;
                     if (press)
                     {
-                        cmbActionBody.SelectedIndex = 0;
+                        cmbActionBody.SelectedIndex = attack;
                         return;
                     }
+
                     break;
                 default:
                     return;
             }
 
-            if ((status & 0x3) == 0)
-                cmbActionBody.SelectedIndex = 2;
+            // Console.WriteLine($"d:{press}:{keyData}:{status}:{cmbActionBody.SelectedIndex}");
+            if ((0x3 & status) == 0)
+                cmbActionBody.SelectedIndex = stand;
             else
             {
-                cmbActionBody.SelectedIndex = 0;
+                if (!press)
+                    flip = (1 & status) == 0;
+                if (cmbActionBody.SelectedIndex == walk)
+                {
+                    cmbActionBody_SelectedIndexChanged(null, null);
+                }
+                else
+                {
+                    cmbActionBody.SelectedIndex = 0;
+                }
             }
         }
 
@@ -106,6 +120,7 @@ namespace WzComparerR2.Avatar.UI
         string partsTag;
         bool suspendUpdate;
         bool needUpdate;
+        private bool flip = true;
         Animator animator;
 
         /// <summary>
@@ -332,7 +347,7 @@ namespace WzComparerR2.Avatar.UI
             selectedItem = this.cmbEar.SelectedItem as ComboItem;
             this.avatar.EarType = selectedItem != null ? Convert.ToInt32(selectedItem.Text) : 0;
 
-            string actionTag = string.Format("{0}:{1},{2}:{3},{4}:{5},{6},{7},{8},{9},{10}",
+            string actionTag = string.Format("{0}:{1},{2}:{3},{4}:{5},{6},{7},{8},{9},{10},{11}",
                 this.avatar.ActionName,
                 bodyFrame,
                 this.avatar.EmotionName,
@@ -343,7 +358,8 @@ namespace WzComparerR2.Avatar.UI
                 this.avatar.ShowHairShade ? 1 : 0,
                 this.avatar.EarType,
                 this.avatar.WeaponType,
-                this.avatar.WeaponIndex);
+                this.avatar.WeaponIndex,
+                flip);
 
             if (!avatarContainer1.HasCache(actionTag))
             {
@@ -356,7 +372,7 @@ namespace WzComparerR2.Avatar.UI
                         f = actionFrames[bodyFrame];
                     }
 
-                    var bone = avatar.CreateFrame(bodyFrame, emoFrame, tamingFrame);
+                    var bone = avatar.CreateFrame(bodyFrame, emoFrame, tamingFrame, flip);
                     var layers = avatar.CreateFrameLayers(bone);
                     avatarContainer1.AddCache(actionTag, layers);
                 }

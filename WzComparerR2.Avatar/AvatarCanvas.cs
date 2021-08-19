@@ -535,13 +535,12 @@ namespace WzComparerR2.Avatar
         /// </summary>
         /// <param name="frame"></param>
         /// <returns></returns>
-        public Bone CreateFrame(int bodyFrame, int faceFrame, int tamingFrame)
+        public Bone CreateFrame(int bodyFrame, int faceFrame, int tamingFrame,bool bodyFlip=false)
         {
             ActionFrame bodyAction = null, faceAction = null, tamingAction = null;
             string actionName = this.ActionName,
                 emotionName = this.EmotionName,
                 tamingActionName = this.TamingActionName;
-            bool bodyFlip = false;
 
             //获取骑宠
             if (this.Taming != null)
@@ -563,11 +562,11 @@ namespace WzComparerR2.Avatar
 
                     if (tamingAction.ForceCharacterFlip)
                     {
-                        bodyFlip = true;
+                        bodyFlip = !bodyFlip;
                     }
                     else if (this.Taming.Node.FindNodeByPath(@"info\flip").GetValueEx(0) != 0)
                     {
-                        bodyFlip = true;
+                        bodyFlip = !bodyFlip;
                     }
 
                     if (this.Taming.Node.FindNodeByPath(@"info\removeBody").GetValueEx(0) != 0) //自动适用动作
