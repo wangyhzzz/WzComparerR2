@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using DevComponents.DotNetBar;
 using WzComparerR2.PluginBase;
 
 namespace WzComparerR2
@@ -36,6 +37,7 @@ namespace WzComparerR2
             var cng = Config.ConfigManager.ConfigFile;
             frm.PluginOnLoad();
             PluginManager.PluginOnLoad();
+            ((SuperTabControl) frm.Controls.Find("superTabControl1", true)[0]).SelectedTabIndex = 5;
             //走你
             Application.Run(frm);
         }

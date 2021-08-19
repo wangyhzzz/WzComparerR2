@@ -32,6 +32,11 @@ namespace WzComparerR2.Avatar.UI
             this.KeyPreview = true;
         }
 
+        protected override void OnLoad(EventArgs e)
+        {
+            this.btnMale_Click(null, null);
+        }
+
         protected override void OnKeyDown(KeyEventArgs e)
         {
             handKey(true, e.KeyData);
@@ -42,20 +47,41 @@ namespace WzComparerR2.Avatar.UI
             handKey(false, e.KeyData);
         }
 
+        static private int status = 0;
         void handKey(bool press, Keys keyData)
         {
-            if (!press)
-                cmbActionBody.SelectedIndex = 2;
+            int _press = press ? 1 : 0;
+            Console.WriteLine("c" + press +":"+ keyData);
             switch (keyData)
             {
                 case Keys.A:
-                    cmbActionBody.SelectedIndex = 0;
+                    if ((status ^ _press << 0) == 0)
+                        return;
+                    status ^=  1 << 0;
+                    if (press)
+                    {
+                        cmbActionBody.SelectedIndex = 0;
+                        return;
+                    }
                     break;
                 case Keys.D:
-                    cmbActionBody.SelectedIndex = 0;
+                    if ((status ^ _press << 1) == 0) return;
+                    status ^=  1 << 1;
+                    if (press)
+                    {
+                        cmbActionBody.SelectedIndex = 0;
+                        return;
+                    }
                     break;
                 default:
                     return;
+            }
+
+            if ((status & 0x3) == 0)
+                cmbActionBody.SelectedIndex = 2;
+            else
+            {
+                cmbActionBody.SelectedIndex = 0;
             }
         }
 

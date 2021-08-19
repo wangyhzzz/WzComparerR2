@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Linq;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Xml;
 using Timer = System.Timers.Timer;
 using System.Threading;
@@ -32,6 +33,14 @@ namespace WzComparerR2
 {
     public partial class MainForm : Office2007RibbonForm, PluginContextProvider
     {
+        [DllImport("kernel32.dll")]
+        public static extern bool AllocConsole();
+        [DllImport("User32.dll ", EntryPoint = "FindWindow")]
+        private static extern int FindWindow(string lpClassName, string lpWindowName);
+        [DllImport("user32.dll ", EntryPoint = "GetSystemMenu")]
+        extern static IntPtr GetSystemMenu(IntPtr hWnd, IntPtr bRevert);
+        [DllImport("user32.dll ", EntryPoint = "RemoveMenu")]
+        extern static int RemoveMenu(IntPtr hMenu, int nPos, int flags);
         public MainForm()
         {
             InitializeComponent();
@@ -43,8 +52,25 @@ namespace WzComparerR2
             RegisterPluginEvents();
             createStyleItems();
             initFields();
-            openWz(@"E:\Program Files (x86)\上海数龙科技有限公司\冒险岛online\Base.wz");
+            openWz(@"E:\Program Files (x86)\上海数龙科技有限公司\res\Base.wz");
+            
+            OpenConsole();
+            Console.WriteLine("koj");
         }
+        public void OpenConsole()
+        {
+            AllocConsole();
+            //根据控制台标题找控制台
+            int WINDOW_HANDLER = FindWindow(null, Console.Title);
+            //A找关闭按钮 次代码和B下的代码是禁用打开窗口的关闭按钮（同时也会关闭程序）         
+            IntPtr CLOSE_MENU = GetSystemMenu((IntPtr)WINDOW_HANDLER, IntPtr.Zero);
+            int SC_CLOSE = 0xF060;
+            //B关闭按钮禁用 （A和B可根据情况选用）         
+            RemoveMenu(CLOSE_MENU, SC_CLOSE, 0x0);
+
+            Console.WriteLine("程序已启动");
+        }
+
 
         List<Wz_Structure> openedWz;
         StringLinker stringLinker;
