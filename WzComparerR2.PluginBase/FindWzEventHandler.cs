@@ -5,4 +5,5 @@ using System.Text;
 namespace WzComparerR2
 {
     public delegate void FindWzEventHandler(object sender, FindWzEventArgs e);
+    public delegate void chooseItemHandler(string e);
 }

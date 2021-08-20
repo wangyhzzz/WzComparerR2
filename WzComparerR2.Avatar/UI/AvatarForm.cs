@@ -15,6 +15,7 @@ namespace WzComparerR2.Avatar.UI
 {
     internal partial class AvatarForm : DevComponents.DotNetBar.OfficeForm
     {
+        public static AvatarForm Instance;
         public AvatarForm()
         {
             InitializeComponent();
@@ -28,12 +29,16 @@ namespace WzComparerR2.Avatar.UI
             buttonItem1.Visible = false;
 #endif
             this.KeyPreview = true;
+            Instance = this;
+            PluginManager.chooseItem += s => LoadCode(s);
         }
 
         protected override void OnLoad(EventArgs e)
         {
             this.btnMale_Click(null, null);
         }
+
+        
 
         protected override void OnKeyDown(KeyEventArgs e)
         {
@@ -1036,7 +1041,7 @@ namespace WzComparerR2.Avatar.UI
             this.avatarContainer1.Invalidate();
         }
 
-        private void LoadCode(string code, int loadType)
+        private void LoadCode(string code, int loadType=1)
         {
             //解析
             var matches = Regex.Matches(code, @"(\d+)([,\s]|$)");

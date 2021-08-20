@@ -18,6 +18,7 @@ namespace WzComparerR2.PluginBase
         /// 当执行FindWz函数时发生，用来寻找对应的Wz_File。
         /// </summary>
         internal static event FindWzEventHandler WzFileFinding;
+        public static chooseItemHandler chooseItem;
 
         /// <summary>
         /// 为CharaSim组件提供全局的搜索Wz_File的方法。
